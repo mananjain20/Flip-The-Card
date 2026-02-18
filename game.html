@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Memory Game</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #111827;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.game {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+  gap: 15px;
+}
+
+.card {
+  width: 100px;
+  height: 120px;
+  background: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+.card:hover {
+  background: #374151;
+}
+.win {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #22c55e;
+}
+</style>
+</head>
+<body>
+<h1>Memory Flip Game</h1>
+<div class="game" id="game"></div>
+<div class="win" id="win"></div>
+<script>
+const emojis = ["🚀","🛰️","🌍","⭐","✈️","🌙","☄️","🛸"];
+let cardsArray = [...emojis, ...emojis];
+cardsArray.sort(() => 0.5 - Math.random());
+const game = document.getElementById("game");
+let first = null;
+let second = null;
+let lock = false;
+let matches = 0;
+cardsArray.forEach(emoji => {
+  const card = document.createElement("div");
+  card.classList.add("card");
+  card.textContent = "?";
+  card.addEventListener("click", () => {
+    if (lock || card.textContent !== "?") return;
+    card.textContent = emoji;
+    if (!first) {
+      first = card;
+      return;
+    }
+    second = card;
+    lock = true;
+    if (first.textContent === second.textContent) {
+      matches++;
+      resetTurn();
+      if (matches === emojis.length) {
+        document.getElementById("win").textContent =
+          "You matched all cards! 🎉";
+      }
+    } else {
+      setTimeout(() => {
+        first.textContent = "?";
+        second.textContent = "?";
+        resetTurn();
+      }, 700);
+    }
+  });
+  game.appendChild(card);
+});
+
+function resetTurn() {
+  [first, second, lock] = [null, null, false];
+}
+</script>
+</body>
+</html>
